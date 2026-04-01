@@ -1,0 +1,47 @@
+version: 1
+name: ${PROJECTDIR}
+domain: ${PROJECTNAME}.${SCDEV_DOMAIN}
+
+info: |
+  ## ${PROJECTNAME}
+
+  Symfony application.
+
+  Run `scdev setup` to scaffold and install the project.
+
+shared:
+  router: true
+
+services:
+  app:
+    image: php:8.4-cli-alpine
+    command: >-
+      sh -c "
+      if [ ! -f .setup-complete ]; then
+        echo 'Waiting for setup... Run: scdev setup';
+        while [ ! -f .setup-complete ]; do sleep 2; done;
+      fi;
+      if ! command -v composer > /dev/null 2>&1; then
+        wget -qO- https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer;
+      fi;
+      if ! command -v symfony > /dev/null 2>&1; then
+        apk add --no-cache bash > /dev/null 2>&1;
+        wget https://get.symfony.com/cli/installer -O - 2>/dev/null | bash > /dev/null 2>&1;
+        export PATH=\"$HOME/.symfony5/bin:$PATH\";
+      fi;
+      composer install --no-interaction &&
+      exec symfony server:start --no-tls --port=8000 --allow-all-ip"
+    working_dir: /app
+    volumes:
+      - ${PROJECTPATH}:/app
+    environment:
+      APP_ENV: dev
+    routing:
+      port: 8000
+
+mutagen:
+  ignore:
+    - vendor
+    - .scdev
+    - .setup-complete
+    - var
