@@ -49,3 +49,7 @@ scdev exec app composer require webapp
 
 - [scdev](https://github.com/ScaleCommerce-DEV/scdev) installed
 - Docker Desktop running
+
+## Learn more
+
+Want to create your own template? See the [Template Authoring Guide](https://github.com/ScaleCommerce-DEV/scdev/blob/main/templates/README.md).
