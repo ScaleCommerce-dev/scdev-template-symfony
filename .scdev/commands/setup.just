@@ -5,7 +5,7 @@
 
 [no-exit-message]
 default:
-    scdev start
+    scdev start -q
     @echo ""
     @echo "Installing Composer and Symfony CLI..."
     scdev exec app sh -c "apk add --no-cache bash && wget -qO- https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer && wget https://get.symfony.com/cli/installer -O - 2>/dev/null | bash && cp \$HOME/.symfony5/bin/symfony /usr/local/bin/symfony"
