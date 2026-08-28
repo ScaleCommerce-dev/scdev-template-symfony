@@ -1,0 +1,21 @@
+# The Symfony dev server, supervised by zpinit (mode 3 — the image has no CMD).
+#
+# Runs after entrypoint.d/ (composer install). `server:start` runs in the
+# foreground (no -d), so zpinit supervises it directly. If it crashes, zpinit
+# restarts it with backoff and the CONTAINER STAYS UP, so `zdev exec` keeps
+# working and you can fix things in place, then `zpctl restart app`.
+#
+# --no-tls: zdev terminates TLS at Traefik. --allow-all-ip: bind 0.0.0.0 so the
+# router can reach it. Port matches routing.port in config.yaml.
+command = ["symfony", "server:start", "--no-tls", "--port=8000", "--allow-all-ip"]
+cwd = "/app"
+restart = "always"
+
+# on_boot_failure = "continue": pairs with entrypoint_on_failure in
+# zpinit.toml. Without it, a dev server that cannot START on a COLD boot
+# (composer install failed so vendor/ is incomplete, a fatal in config)
+# fails zpinit's initial boot after boot_timeout, and the default "fail"
+# exits the container: a brick, in exactly the situation supervise mode
+# exists to survive. With "continue" PID 1 stays up, the failure shows in
+# `zpctl status`, and `zdev exec` + `zpctl restart app` recover it.
+on_boot_failure = "continue"

@@ -1,0 +1,8 @@
+# zpinit globals.
+#
+# entrypoint_on_failure = "continue": if the boot install (entrypoint.d/
+# 10-install.sh) exits non-zero, log it and carry on to supervise mode instead
+# of aborting PID 1 (the default "fail", which exits the container). That keeps
+# the container up and `zdev exec`-able so a failed `composer install` (network
+# blip, a broken composer.json) is recoverable in place rather than a brick.
+entrypoint_on_failure = "continue"
